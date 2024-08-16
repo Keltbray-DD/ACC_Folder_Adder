@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="assets/css/main.css">
-  <script src="js/extractData.js"></script>
-  <script src="js/getACCData.js"></script>
   <script src="js/variables.js"></script>
   <script src="js/createFolder.js"></script>
 
@@ -38,12 +36,7 @@
 </header>
 
 <body>
-  <div id="loadingScreen">
-    <div class="spinner"></div>
-      <p>Loading ACC Data...</p>
-      <div id="tooltip" class="tooltip">
-    </div>
-  </div>
+  
 <div class="form-container">
   <h3 class="containerH2">This tool is for adding sub projects to the SSE - GSP ACC Project</h3>
 </div>
@@ -73,29 +66,5 @@
   <p>How to use this tool</p>
   <i class="fa-regular fa-circle-question"></i>
 </div>
-
-<script>
-// Get all radio inputs
-const radioInputs = document.querySelectorAll('input[name="startType"]');
-
-// Attach change event listener to each radio input
-radioInputs.forEach(input => {
-    input.addEventListener('change', function() {
-        selectedOptionStartType = document.querySelector('input[name="startType"]:checked').value;
-        console.log(selectedOptionStartType);
-        const newContainer = document.getElementById("newForm")
-        const exisitngContainer = document.getElementById("existingForm")
-        if(selectedOptionStartType === "new"){
-          newContainer.style.display = "block";
-          exisitngContainer.style.display = "none";
-        }
-        if(selectedOptionStartType === "existing"){
-          exisitngContainer.style.display = "block";
-          newContainer.style.display = "none";
-        }
-    });
-});
-</script>
-
 </body>
 </html>
