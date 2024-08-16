@@ -69,7 +69,12 @@ async function createSubFolders(folderArray,newProjectFolderId) {
                 
                 console.log(folder.folder + " created");
                 statusElement.innerHTML = `<p> ${folder.folder+ " created"}</p>`
-                webhookFolders.push({project:"SSE - GSP/"+newProjectName,projectId:projectID,folderName:folder.folder,endFolder:folder.folder,folderId:subFolderData.data.id})
+                const criteria = ['0A.INCOMING', '0H.ARCHIVED', 'Z.PROJECT_ADMIN'];
+
+                if (!criteria.includes(folder.folder)) {
+                    webhookFolders.push({project:"SSE - GSP/"+newProjectName,projectId:projectID,folderName:folder.folder,endFolder:folder.folder,folderId:subFolderData.data.id})
+                } 
+           
                 createdFolders.push({folderName:folder.folder,folderId:subFolderData.data.id})
             } catch (error) {
                 console.error("Error creating subfolder:", folder.folder, error);
