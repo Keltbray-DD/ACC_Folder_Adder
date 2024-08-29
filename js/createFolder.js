@@ -18,7 +18,7 @@ async function createFolderStructure(){
 
     await createSubFolders(projectFolderStructure,newProjectFolderId)
     console.log("createdFolders", createdFolders)
-    const subContratorFolderId = createdFolders.find(element => element.folderName === "0D.SUB-CONTRACTORS")
+    const subContratorFolderId = createdFolders.find(element => element.folderName === "0C.WIP")
     await createSubContracterFolders(arraySelectedContractorArray,subContratorFolderId.folderId)
 
 
@@ -42,7 +42,6 @@ async function createSubContracterFolders(folderArray,parentFolderId) {
                 const subFolderData = await createFolder(folder, parentFolderId);
                 console.log(subFolderData);
                 console.log(subFolderData.data.id);
-                await createFolder("WIP", subFolderData.data.id);
 
                 console.log(folder + " created");
                 statusElement.innerHTML = `<p> ${folder+ " created"}</p>`
@@ -70,9 +69,14 @@ async function createSubFolders(folderArray,newProjectFolderId) {
                 console.log(folder.folder + " created");
                 statusElement.innerHTML = `<p> ${folder.folder+ " created"}</p>`
                 const criteria = ['0A.INCOMING', '0H.ARCHIVED', 'Z.PROJECT_ADMIN'];
-
+                var endfolderString
                 if (!criteria.includes(folder.folder)) {
-                    webhookFolders.push({project:"SSE - GSP/"+newProjectName,projectId:projectID,folderName:folder.folder,endFolder:folder.folder,folderId:subFolderData.data.id})
+                    if(folder.folder != "0C.WIP"){
+                        endfolderString = folder.folder+" V2"
+                    }else{
+                        endfolderString = folder.folder
+                    }
+                    webhookFolders.push({project:"SSE - GSP/"+newProjectName,projectId:projectID,folderName:folder.folder,endFolder:endfolderString,folderId:subFolderData.data.id})
                 } 
            
                 createdFolders.push({folderName:folder.folder,folderId:subFolderData.data.id})
@@ -315,3 +319,39 @@ async function postPermissions(folder_id,project_id,subject_id,subject_type,acti
     
         return signedURLData
         }
+        async function postPermissions(folder_id,project_id,subject_id,subject_type,actions_list){
+            const actionsSearch = permssions.find(obj => obj.level == actions_list)
+            const actionsUse = actionsSearch ? actionsSearch.actions : undefined;
+            const bodyData = [{
+                subjectId: subject_id,
+                subjectType: subject_type,
+                actions: actionsUse
+                }];
+        
+            const headers = {
+                'Authorization':"Bearer "+access_token,
+                'Content-Type':'application/json'
+            };
+        
+            const requestOptions = {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(bodyData)
+            };
+        
+            const apiUrl = "https://developer.api.autodesk.com/bim360/docs/v1/projects/"+project_id+"/folders/"+folder_id+"/permissions:batch-update";
+            //console.log(apiUrl)
+            console.log(requestOptions)
+            signedURLData = await fetch(apiUrl,requestOptions)
+                .then(response => response.json())
+                .then(data => {
+                    const JSONdata = data
+        
+                console.log(JSONdata)
+        
+                return JSONdata
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        
+            return signedURLData
+            }

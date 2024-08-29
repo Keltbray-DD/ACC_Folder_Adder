@@ -33,9 +33,8 @@ let submitBtn
 
 const projectFolderStructure = [
     {folder:"0A.INCOMING",parentFolder:"TOP_FOLDER",requireNS:"N"},
-    {folder:"0C.KELTBRAY",parentFolder:"TOP_FOLDER",requireNS:"Y"},
-    {folder:"WIP",parentFolder:"0C.KELTBRAY",requireNS:"Y"},
-    {folder:"0D.SUB-CONTRACTORS",parentFolder:"TOP_FOLDER",requireNS:"Y"},
+    {folder:"0C.WIP",parentFolder:"TOP_FOLDER",requireNS:"Y"},
+    {folder:"0D.COMMERCIAL",parentFolder:"TOP_FOLDER",requireNS:"Y"},
     {folder:"0E.SHARED",parentFolder:"TOP_FOLDER",requireNS:"Y"},
     {folder:"0F.CLIENT_SHARED",parentFolder:"TOP_FOLDER",requireNS:"Y"},
     {folder:"0G.PUBLISHED",parentFolder:"TOP_FOLDER",requireNS:"Y"},
@@ -43,11 +42,12 @@ const projectFolderStructure = [
     {folder:"Z.PROJECT_ADMIN",parentFolder:"TOP_FOLDER",requireNS:"N"}
 ]
 
-const projectSubContractors = [
-    {folder:"DAL_Dalcour",parentFolder:"0D.SUB-CONTRACTORS"},
-    {folder:"EXC_Excalon",parentFolder:"0D.SUB-CONTRACTORS"},
-    {folder:"HMF_HMF_Consultants",parentFolder:"0D.SUB-CONTRACTORS"},
-    {folder:"SSE_Scottish_and_Southern_Energy_(Client)",parentFolder:"0D.SUB-CONTRACTORS"},
+const projectWIPFolders = [
+    {folder:"DAL - Dalcour",parentFolder:"0C.WIP"},
+    {folder:"EXC - Excalon",parentFolder:"0C.WIP"},
+    {folder:"HMF - HMF Consultants",parentFolder:"0C.WIP"},
+    {folder:"KEL - Keltbray",parentFolder:"0C.WIP"},
+    {folder:"SSE - Scottish and Southern Energy (Client)",parentFolder:"0C.WIP"},
 ]
 const permssions =[
     {level:"FullController",actions:["PUBLISH","PUBLISH_MARKUP","VIEW","DOWNLOAD","COLLABORATE","EDIT","CONTROL"]},
@@ -59,8 +59,20 @@ const permssions =[
 ];
 
 const folderPermissionList =[
-    {folderName:"0C.KELTBRAY",folderPermissions:[
+    {folderName:"DAL - Dalcour",folderPermissions:[
+        {name:"Dalcour",subjectId:"6292dbce-36c9-4582-975a-9455aebad0f7",autodeskId:"",subjectType:"COMPANY",actions:"createFull"},
+    ]},
+    {folderName:"EXC - Excalon",folderPermissions:[
+        {name:"Excalon",subjectId:"5ddc8bb2-76b2-4427-a90d-f3a06be71894",autodeskId:"",subjectType:"COMPANY",actions:"createFull"},
+    ]},
+    {folderName:"HMF - HMF Consultants",folderPermissions:[
+        {name:"HMF Consulting",subjectId:"4634db8e-abba-4802-ad6f-52b4c49296bc",autodeskId:"",subjectType:"COMPANY",actions:"createFull"},
+    ]},
+    {folderName:"KEL - Keltbray",folderPermissions:[
         {name:"Keltbray",subjectId:"6b11172f-c01a-4fde-9abe-a3a12a978861",autodeskId:"",subjectType:"COMPANY",actions:"createFull"},
+    ]},
+    {folderName:"SSE - Scottish and Southern Energy (Client)",folderPermissions:[
+        {name:"SSE",subjectId:"d8e74e8c-4360-41d2-9bc2-97f48c02f0a8",autodeskId:"",subjectType:"COMPANY",actions:"createFull"},
     ]},
     {folderName:"0E.SHARED",folderPermissions:[
         {name:"Keltbray",subjectId:"6b11172f-c01a-4fde-9abe-a3a12a978861",autodeskId:"",subjectType:"COMPANY",actions:"viewFull"},
@@ -78,19 +90,7 @@ const folderPermissionList =[
         {name:"Excalon",subjectId:"5ddc8bb2-76b2-4427-a90d-f3a06be71894",autodeskId:"",subjectType:"COMPANY",actions:"viewFull"},
         {name:"HMF Consulting",subjectId:"4634db8e-abba-4802-ad6f-52b4c49296bc",autodeskId:"",subjectType:"COMPANY",actions:"viewFull"},
         {name:"SSE",subjectId:"d8e74e8c-4360-41d2-9bc2-97f48c02f0a8",autodeskId:"",subjectType:"COMPANY",actions:"viewFull"},
-    ]},
-    {folderName:"DAL_Dalcour",folderPermissions:[
-        {name:"Dalcour",subjectId:"6292dbce-36c9-4582-975a-9455aebad0f7",autodeskId:"",subjectType:"COMPANY",actions:"createFull"},
-    ]},
-    {folderName:"EXC_Excalon",folderPermissions:[
-        {name:"Excalon",subjectId:"5ddc8bb2-76b2-4427-a90d-f3a06be71894",autodeskId:"",subjectType:"COMPANY",actions:"createFull"},
-    ]},
-    {folderName:"HMF_HMF_Consultants",folderPermissions:[
-        {name:"HMF Consulting",subjectId:"4634db8e-abba-4802-ad6f-52b4c49296bc",autodeskId:"",subjectType:"COMPANY",actions:"createFull"},
-    ]},
-    {folderName:"SSE_Scottish_and_Southern_Energy_(Client)",folderPermissions:[
-        {name:"SSE",subjectId:"d8e74e8c-4360-41d2-9bc2-97f48c02f0a8",autodeskId:"",subjectType:"COMPANY",actions:"createFull"},
-    ]},
+    ]}
 
 ]
 document.addEventListener('DOMContentLoaded', function() {
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
     submitBtn = document.getElementById('submitBtn')
     statusElement = document.getElementById('statusUpdate');
     subContractorsListHtml = document.getElementById('subContractorsList');
-    renderSubContractorList(projectSubContractors)
+    renderSubContractorList(projectWIPFolders)
     newFolderLinkBtn.style.display = "none"
   });
 
