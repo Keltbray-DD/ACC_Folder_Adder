@@ -36,7 +36,6 @@ const projectFolderStructure = [
     {folder:"0C.WIP",parentFolder:"TOP_FOLDER",requireNS:"Y"},
     {folder:"0D.COMMERCIAL",parentFolder:"TOP_FOLDER",requireNS:"Y"},
     {folder:"0E.SHARED",parentFolder:"TOP_FOLDER",requireNS:"Y"},
-    {folder:"0F.CLIENT_SHARED",parentFolder:"TOP_FOLDER",requireNS:"Y"},
     {folder:"0G.PUBLISHED",parentFolder:"TOP_FOLDER",requireNS:"Y"},
     {folder:"0H.ARCHIVED",parentFolder:"TOP_FOLDER",requireNS:"N"},
     {folder:"Z.PROJECT_ADMIN",parentFolder:"TOP_FOLDER",requireNS:"N"}
