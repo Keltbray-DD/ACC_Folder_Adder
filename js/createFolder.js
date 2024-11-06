@@ -8,7 +8,7 @@ async function createFolderStructure(){
     newProjectName = $("#input_subprojectname").val()
     console.log(newProjectName)
     console.log(arraySelectedContractorArray)
-    topFolderData = await createFolder(newProjectName,topFolder,"N")
+    topFolderData = await createFolder(newProjectName,topFolder)
 
     console.log(topFolderData)
     var newProjectFolderId = topFolderData.data.id
@@ -16,12 +16,12 @@ async function createFolderStructure(){
     console.log("newFolderLink", newFolderLink)
     console.log("newProjectFolderId", newProjectFolderId)
 
-    await createSubFolders(projectFolderStructure,newProjectFolderId)
+    await createSubFolderStructure(folderStructure, newProjectFolderId)
+
+    //await createSubFolders(projectFolderStructure,newProjectFolderId)
     console.log("createdFolders", createdFolders)
     const subContratorFolderId = createdFolders.find(element => element.folderName === "0C.WIP")
     await createSubContracterFolders(arraySelectedContractorArray,subContratorFolderId.folderId)
-
-
     await searchAndPerformAction(createdFolders);
     await addWebhooksToFolders(webhookFolders);
 
@@ -30,6 +30,40 @@ async function createFolderStructure(){
 
     alert("Project creation complete please go to ACC to see your project, please note you still need to apply the naming standard to the relevant folders")
 }
+async function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function createSubFolderStructure(folderArray, parentFolderId) {
+    for (const folder of folderArray) {
+        try {
+            // Create the folder in ACC
+            const responseData = await createFolder(folder.name, parentFolderId);
+            await delay(100)
+            const criteria = ['0C.WIP', '0E.SHARED', '0G.PUBLISHED'];
+            // Extract the new folder's ID from the response
+            const newFolderId = responseData.data.id;
+            console.log(`Created folder: ${folder.name} with ID: ${newFolderId}`);
+            statusElement.innerHTML = `<p> ${folder.name+ " created"}</p>`
+            createdFolders.push({folderName:folder.name,folderId:responseData.data.id})
+            if (criteria.includes(folder.name)) {
+                if(folder.name != "0C.WIP"){
+                    endfolderString = folder.name+" V2"
+                }else{
+                    endfolderString = folder.name
+                }
+                webhookFolders.push({project:"SSE - GSP/"+newProjectName,projectId:projectID,folderName:folder.name,endFolder:endfolderString,folderId:responseData.data.id})
+            }
+            // If the folder has children, recursively create them under this new folder
+            if (folder.children && folder.children.length > 0) {
+                await createSubFolderStructure(folder.children, newFolderId);
+            }
+        } catch (error) {
+            console.error(`Error creating folder ${folder.name}:`, error);
+        }
+    }
+}
+
+
 
 function openFolderLink(){
     window.open(newFolderLink, '_blank').focus();
@@ -87,36 +121,35 @@ async function createSubFolders(folderArray,newProjectFolderId) {
     }
 }
 
-async function createFolder(folderName,parentFolder,requireNS){
- 
+// Function to create a single folder in ACC
+async function createFolder(folderName, parentFolderId) {
     const bodyData = {
-            "jsonapi": {
-              "version": "1.0"
-            },
-            "data": {
-              "type": "folders",
-              "attributes": {
+        "jsonapi": {
+            "version": "1.0"
+        },
+        "data": {
+            "type": "folders",
+            "attributes": {
                 "name": folderName,
                 "extension": {
-                  "type": "folders:autodesk.bim360:Folder",
-                  "version": "1.0"
-              }},
-              "relationships": {
-                "parent": {
-                  "data": {
-                    "type": "folders",
-                    "id": parentFolder
-                  }
+                    "type": "folders:autodesk.bim360:Folder",
+                    "version": "1.0"
                 }
-              }
+            },
+            "relationships": {
+                "parent": {
+                    "data": {
+                        "type": "folders",
+                        "id": parentFolderId
+                    }
+                }
             }
-          }
-        
-    
+        }
+    };
 
     const headers = {
-        'Content-Type':'application/vnd.api+json',
-        'Authorization':'Bearer '+access_token
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer ' + access_token // Make sure to replace access_token with your actual token
     };
 
     const requestOptions = {
@@ -125,23 +158,24 @@ async function createFolder(folderName,parentFolder,requireNS){
         body: JSON.stringify(bodyData)
     };
 
-    const apiUrl = "https://developer.api.autodesk.com/data/v1/projects/b."+projectID+"/folders";
-    //console.log(apiUrl)
-    console.log(requestOptions)
-    responeData = await fetch(apiUrl,requestOptions)
-        .then(response => response.json())
-        .then(data => {
-            const JSONdata = data
+    const apiUrl = `https://developer.api.autodesk.com/data/v1/projects/b.${projectID}/folders`;
 
-        //console.log(JSONdata)
+    try {
+        const response = await fetch(apiUrl, requestOptions);
+        const data = await response.json();
 
-        return JSONdata
-        })
-        .catch(error => console.error('Error fetching data:', error));
-
-
-    return responeData
+        if (response.ok) {
+            console.log(`Folder created: ${folderName}`);
+            return data; // Return the response data, which should contain the new folder's ID
+        } else {
+            console.error(`Failed to create folder: ${folderName}`, data);
+            throw new Error(data.errors ? data.errors[0].detail : "Unknown error");
+        }
+    } catch (error) {
+        console.error('Error creating folder:', error);
+        throw error;
     }
+}
 
     async function patchFolder(folderID){
 
@@ -310,7 +344,7 @@ async function postPermissions(folder_id,project_id,subject_id,subject_type,acti
             .then(data => {
                 const JSONdata = data
     
-            //console.log(JSONdata)
+            console.log(JSONdata)
     
             return JSONdata
             })
