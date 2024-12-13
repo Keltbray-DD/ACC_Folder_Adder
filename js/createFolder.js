@@ -36,29 +36,40 @@ async function delay(ms) {
 async function createSubFolderStructure(folderArray, parentFolderId) {
     for (const folder of folderArray) {
         try {
+            // Delay between folder creations to avoid rate limits
+            await delay(200); // 200ms delay, adjust based on your API limits
+
             // Create the folder in ACC
             const responseData = await createFolder(folder.name, parentFolderId);
-            await delay(100)
-            const criteria = ['0C.WIP', '0E.SHARED', '0G.PUBLISHED'];
+
             // Extract the new folder's ID from the response
             const newFolderId = responseData.data.id;
             console.log(`Created folder: ${folder.name} with ID: ${newFolderId}`);
-            statusElement.innerHTML = `<p> ${folder.name+ " created"}</p>`
-            createdFolders.push({folderName:folder.name,folderId:responseData.data.id})
+            statusElement.innerHTML = `<p>${folder.name} created</p>`;
+
+            // Track created folders
+            createdFolders.push({ folderName: folder.name, folderId: newFolderId });
+
+            // Check if the folder matches specific criteria for webhook
+            const criteria = ['0C.WIP', '0E.SHARED', '0G.PUBLISHED'];
             if (criteria.includes(folder.name)) {
-                if(folder.name != "0C.WIP"){
-                    endfolderString = folder.name+" V2"
-                }else{
-                    endfolderString = folder.name
-                }
-                webhookFolders.push({project:"SSE - GSP/"+newProjectName,projectId:projectID,folderName:folder.name,endFolder:endfolderString,folderId:responseData.data.id})
+                const endfolderString = folder.name === "0C.WIP" ? folder.name : `${folder.name} V2`;
+                webhookFolders.push({
+                    project: `SSE - GSP/${newProjectName}`,
+                    projectId: projectID,
+                    folderName: folder.name,
+                    endFolder: endfolderString,
+                    folderId: newFolderId,
+                });
             }
+
             // If the folder has children, recursively create them under this new folder
             if (folder.children && folder.children.length > 0) {
+                console.log(`Creating subfolders under: ${folder.name}`);
                 await createSubFolderStructure(folder.children, newFolderId);
             }
         } catch (error) {
-            console.error(`Error creating folder ${folder.name}:`, error);
+            console.error(`Error creating folder ${folder.name}:`, error.message);
         }
     }
 }
