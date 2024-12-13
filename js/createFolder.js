@@ -24,7 +24,7 @@ async function createFolderStructure(){
     await createSubContracterFolders(arraySelectedContractorArray,subContratorFolderId.folderId)
     await searchAndPerformAction(createdFolders);
     await addWebhooksToFolders(webhookFolders);
-
+    statusElement.innerHTML = `<p>Project created</p>`;
     newFolderLinkBtn.style.display = "block"
 
 
@@ -357,7 +357,7 @@ async function postPermissions(folder_id,project_id,subject_id,subject_type,acti
     
             console.log(JSONdata)
     
-            return JSONdata
+            //return JSONdata
             })
             .catch(error => console.error('Error fetching data:', error));
     
