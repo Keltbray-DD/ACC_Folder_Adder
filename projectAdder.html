@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="https://www.aureos.com/wp-content/uploads/2025/02/AUREOS-FAVicon_512px-x-512px-150x150.png" sizes="32x32">
+
+  <link rel="stylesheet" href="./assets/css/main.css">
+  <link rel="stylesheet" href="./assets/css/userBox.css">
+  <link rel="stylesheet" href="./assets/css/project_uploader.css">
+
+  <script src="./js/variables.js"></script>
+  <script src="./js/createFolder.js"></script>
+  <script src="./js/login.js"></script>
+  <script src="./js/mainProjectUploader.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+  <!-- Include jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Include PapaParse -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
+  <script src="https://kit.fontawesome.com/eefbfa2a22.js" crossorigin="anonymous"></script>
+
+  <title>Digital Delivery Tool - ACC Sub Project Adder</title>
+</head>
+<header>
+  <div class="header-section">
+      <img alt="" id="headerlogo" class="logo_H" src="https://www.aureos.com/wp-content/uploads/2025/02/AUREOS-FAVicon_512px-x-512px-150x150.png">
+      <h2 class="branding">Aureos <br>DD Hub</h2>
+  </div>
+  <div class="header-section" id="main_header">
+      <h1>ACC Framework Project Uploader</h1>
+  </div>
+  <div class="header-section version">
+
+</div>
+</header>
+
+<body>
+      <!-- Login Box -->
+      <div class="login-box">
+        <div class="profile-container">
+            <div class="profile-info">
+              <div><strong id="userName" class="name"> </strong></div>
+              <div id="userEmail"></div>
+              <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+            <img id="userPicture" alt="User Profile Image" src="https://images.profile.autodesk.com/default/user_X58.png">
+          </div>
+    </div>
+<div class="form-container">
+  <h3 class="containerH2">This tool is for adding sub projects to frameworks</h3>
+</div>
+
+<div class="form-container" id="newForm">
+  <h3 class="containerH2">New Sub Project Details</h3>
+  <label class="projectLabel" id="label_groupParentFolders" for="input_folder" aria-hidden="false"> Please select parent folder </label>
+  <select name="groupParentFolders" id="groupParentFolders">
+    <option value=""></option>
+  </select>
+
+  <label class="projectLabel" id="label_subprojectname" for="input_folder" aria-hidden="false"> Please enter sub project name </label>
+  <input id="input_subprojectname" type="text">
+
+  <label class="projectLabel" id="label_subcontractors" for="input_folder" aria-hidden="false"> Please select which originators will be working on the project </label>
+<div>
+  <fieldset id="subContractorsField">
+    <legend>
+    </legend>
+    <ul id="subContractorsList">
+
+    </ul>
+  </fieldset>
+</div>
+
+  <button id="submitBtn" class="submittButton" onclick="runChecks()">Add project</button>
+  <div  class="statusUpdate" id="statusUpdate"></div>
+  <button id="newFolderLinkBtn" class="submittButton" onclick="openFolderLink()">View project folder on ACC</button>
+  <button id="newProjectBtn" class="submittButton" onclick="location.reload()">Add another project</button>
+</div>
+<div class="form-container">
+  <h3 class="containerH2">Folder Structure</h3>
+  <div id="folderTree" class="folder-structure"></div>
+</div>
+
+<div class="toolHelp" onclick="window.location.href='./help.html'">
+  <p>How to use this tool</p>
+  <i class="fa-regular fa-circle-question"></i>
+</div>
+<div id="appInfo"></div>
+<a href="https://www.aureos.com/" target="_blank" rel="noopener noreferrer">
+    <img src="https://www.aureos.com/wp-content/themes/keltbray/assets/img/logo/AUREOS_logo_wh.svg" 
+         class="logo logo--white" 
+         alt="Aureos Logo">
+</a>
+</body>
+</html>

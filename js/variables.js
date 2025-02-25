@@ -1,11 +1,14 @@
+const appName = "ACC Framewrok Project Uploader";
+const appVersion = "v1.1.1";
 
 const hubID = "b.24d2d632-e01b-4ca0-b988-385be827cb04"
 const account_id = "24d2d632-e01b-4ca0-b988-385be827cb04"
 const bucketKey = "wip.dm.emea.2"
-const defaultFolder = "urn:adsk.wipemea:fs.folder:co.l7DHLbVaRl-XxgXi8QYFZw" // KELTBRAY - WIP Folder
+
 let templateFolderID
 let selectedOptionStartType
 let uploadFileList
+let framework_folder_array
 
 var AccessToken_DataCreate
 var AccessToken_DataRead
@@ -15,10 +18,12 @@ let accessTokenDataWrite
 let ProjectList =[]
 let ProjectListRaw
 
-const projectID = "2e6449f9-ce25-4a9c-8835-444cb5ea03bf"
-const topFolder = "urn:adsk.wipemea:fs.folder:co.uKW9z6rSSoOFNtj4bWn7UA"
-const NSID = "ab4856cc-1546-5a4b-8ff4-99e41fc97170"
+let projectID
+let topFolder = "urn:adsk.wipemea:fs.folder:co.uKW9z6rSSoOFNtj4bWn7UA"
+let project_Name
 
+
+let checkRunning
 let newProjectName
 let subContractorsListHtml
 let arraySelectedContractorArray = []; 
@@ -30,8 +35,13 @@ let statusElement
 let newFolderLink
 let newFolderLinkBtn
 let submitBtn
+let newProjectBtn
+let folderTree
 
-const folderStructure = [
+const folderIcon = '<svg viewBox="0 0 24 24" width="24" height="24" class="folder-icon"><path d="M10 4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6z"></path></svg>';
+
+
+let folderStructure = [
   { name: "0A.INCOMING", children: [] },
   { name: "0C.WIP", children: [] },
   { name: "0D.COMMERCIAL", children: [
@@ -262,14 +272,7 @@ const folderStructure = [
 //     {folder:"Z.PROJECT_ADMIN",parentFolder:"TOP_FOLDER",requireNS:"N"}
 // ]
 
-const projectWIPFolders = [
-    {folder:"DAL - Dalcour",parentFolder:"0C.WIP"},
-    {folder:"EXC - Excalon",parentFolder:"0C.WIP"},
-    {folder:"HMF - HMF Consultants",parentFolder:"0C.WIP"},
-    {folder:"KEL - Keltbray",parentFolder:"0C.WIP"},
-    {folder:"WCS - Whitfield Consulting Services",parentFolder:"0C.WIP"},
-    {folder:"SSE - Scottish and Southern Energy (Client)",parentFolder:"0C.WIP"},
-]
+
 const permssions =[
     {level:"FullController",actions:["PUBLISH","PUBLISH_MARKUP","VIEW","DOWNLOAD","COLLABORATE","EDIT","CONTROL"]},
     {level:"Edit",actions:["PUBLISH","PUBLISH_MARKUP","VIEW","DOWNLOAD","COLLABORATE","EDIT"]},
@@ -279,7 +282,16 @@ const permssions =[
     {level:"viewPart",actions:["VIEW","COLLABORATE"]}
 ];
 
-const folderPermissionList =[
+
+const dt1117_projectWIPFolders = [
+  {folder:"DAL - Dalcour",parentFolder:"0C.WIP"},
+  {folder:"EXC - Excalon",parentFolder:"0C.WIP"},
+  {folder:"HMF - HMF Consultants",parentFolder:"0C.WIP"},
+  {folder:"KEL - Keltbray",parentFolder:"0C.WIP"},
+  {folder:"WCS - Whitfield Consulting Services",parentFolder:"0C.WIP"},
+  {folder:"SSE - Scottish and Southern Energy (Client)",parentFolder:"0C.WIP"},
+]
+const dt1117_folderPermissionList =[
     {folderName:"DAL - Dalcour",folderPermissions:[
         {name:"Dalcour",subjectId:"6292dbce-36c9-4582-975a-9455aebad0f7",autodeskId:"",subjectType:"COMPANY",actions:"createFull"},
     ]},
@@ -319,43 +331,121 @@ const folderPermissionList =[
     ]}
 
 ]
-document.addEventListener('DOMContentLoaded', function() {
-    newFolderLinkBtn = document.getElementById('newFolderLinkBtn')
-    submitBtn = document.getElementById('submitBtn')
-    statusElement = document.getElementById('statusUpdate');
-    subContractorsListHtml = document.getElementById('subContractorsList');
-    renderSubContractorList(projectWIPFolders)
-    newFolderLinkBtn.style.display = "none"
-  });
 
-  function renderSubContractorList(data) {
-    subContractorsListHtml.innerHTML = '';
+const nwf_projectWIPFolders = 
+[
+  {folder:"AID - Aureos IDEC",parentFolder:"0C.WIP"},
+]
+const nwf_folderPermissionList = 
+[
+  {
+    folderName: "AID - Aureos IDEC",
+    folderPermissions: [
+      {
+        name: "Keltbray",
+        subjectId: "1a7ad504-048e-4540-87fe-a5a2587027c4",
+        autodeskId: "",
+        subjectType: "COMPANY",
+        actions: "createFull",
+      },
+    ],
+  },
+  {
+    folderName: "0E.SHARED",
+    folderPermissions: [
+      {
+        name: "Keltbray",
+        subjectId: "1a7ad504-048e-4540-87fe-a5a2587027c4",
+        autodeskId: "",
+        subjectType: "COMPANY",
+        actions: "viewFull",
+      },
+    ],
+  },
+  {
+    folderName: "0G.PUBLISHED",
+    folderPermissions: [
+      {
+        name: "Keltbray",
+        subjectId: "1a7ad504-048e-4540-87fe-a5a2587027c4",
+        autodeskId: "",
+        subjectType: "COMPANY",
+        actions: "viewFull",
+      },
+      {
+        name: "Aqua Operations",
+        subjectId: "c3938940-9381-4691-9039-becb05fb07b9",
+        autodeskId: "",
+        subjectType: "COMPANY",
+        actions: "viewFull",
+      },
+    ],
+  },
+]
 
-    data.forEach(function(record) {
-
-        var gridItem = document.createElement('li');
-        gridItem.innerHTML = `
-                <input type="checkbox" id="${record.folder}" name="SubContractor" value="${record.folder}" />
-                <label for="${record.folder}">${record.folder}</label>
-
-          `;
-          subContractorsListHtml.appendChild(gridItem);
-        
-      });
-      $('button').on('click', function(e) {
-        e.preventDefault();
-
-        $("input:checkbox[name=SubContractor]:checked").each(function() { 
-            arraySelectedContractorArray.push($(this).val()); 
-        });
-        if(arraySelectedContractorArray.length){
-            //console.log(arraySelectedContractorArray)
-        }
-        
-    });
-}
-
-
+[
+  (
+  //   {
+  //   id: "8caa844f-2a0f-4c84-9781-ce52fed407ab",
+  //   account_id: "24d2d632-e01b-4ca0-b988-385be827cb04",
+  //   name: "Ross Shire Engineering",
+  // },
+  // {
+  //   id: "0ecd1fd9-ac23-41c9-b0a1-8be423690956",
+  //   account_id: "24d2d632-e01b-4ca0-b988-385be827cb04",
+  //   name: "Retroflo",
+  // },
+  // {
+  //   id: "b07fd862-81d0-4677-8f84-b8e5af46db8e",
+  //   account_id: "24d2d632-e01b-4ca0-b988-385be827cb04",
+  //   name: "Northumbrian Water",
+  // },
+  // {
+  //   id: "b6fa2a4a-7cc4-495e-b0cc-210d6e6b833f",
+  //   account_id: "24d2d632-e01b-4ca0-b988-385be827cb04",
+  //   name: "J N Bentley",
+  // },
+  // {
+  //   id: "5f85bcc3-ee18-4f68-8045-1499a736b5d9",
+  //   account_id: "24d2d632-e01b-4ca0-b988-385be827cb04",
+  //   name: "Galliford Try",
+  // },
+  {
+    id: "c3938940-9381-4691-9039-becb05fb07b9",
+    account_id: "24d2d632-e01b-4ca0-b988-385be827cb04",
+    name: "Aqua Operations",
+  },
+  // {
+  //   id: "36b44687-13fd-4c44-b71c-b2e1bfbe800d",
+  //   account_id: "24d2d632-e01b-4ca0-b988-385be827cb04",
+  //   name: "Intelect",
+  // },
+  // {
+  //   id: "8ff3cd54-d529-404e-bc36-0d7b7598995f",
+  //   account_id: "24d2d632-e01b-4ca0-b988-385be827cb04",
+  //   name: "Costain",
+  // },
+  // {
+  //   id: "2d964b23-b754-48b0-87eb-c91f9796f26c",
+  //   account_id: "24d2d632-e01b-4ca0-b988-385be827cb04",
+  //   name: "Bam Nuttall Ltd",
+  // },
+  {
+    id: "4b34549e-29b5-4c61-a64e-84284bbd35dd",
+    account_id: "24d2d632-e01b-4ca0-b988-385be827cb04",
+    name: "Avove",
+  },
+  {
+    id: "b8ac06a8-a7eb-4ea1-9e90-a9e153a188d9",
+    account_id: "24d2d632-e01b-4ca0-b988-385be827cb04",
+    name: "Aquazone",
+  },
+  {
+    id: "1a7ad504-048e-4540-87fe-a5a2587027c4",
+    account_id: "24d2d632-e01b-4ca0-b988-385be827cb04",
+    name: "Keltbray IDEC",
+  })
+];
 
 
 
