@@ -123,9 +123,9 @@ async function getFolderListFromSP() {
 async function sortFolderList() {
   try {
     folderData = await getFolderListFromSP();
-    framework_folder_array = JSON.parse(folderData[0].framework_folder_array);
-    projectWIPFolders = JSON.parse(folderData[0].project_creation_wip_folders);
-    folderStructure = JSON.parse(folderData[0].folder_structure);
+    framework_folder_array = JSON.parse(folderData.data[0].framework_folder_array);
+    projectWIPFolders = JSON.parse(folderData.data[0].project_creation_wip_folders);
+    folderStructure = JSON.parse(folderData.data[0].folder_structure);
     console.log("SP_List_framework_folder_array", framework_folder_array);
     console.log("SP_List_projectWIPFolders", projectWIPFolders);
     console.log("SP_List_folderStructure", folderStructure);

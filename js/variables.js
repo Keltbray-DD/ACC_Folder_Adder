@@ -1,5 +1,5 @@
 const appName = "ACC Framework Project Uploader";
-const appVersion = "v1.1.2";
+const appVersion = "v1.1.3";
 
 const hubID = "b.24d2d632-e01b-4ca0-b988-385be827cb04"
 const account_id = "24d2d632-e01b-4ca0-b988-385be827cb04"
