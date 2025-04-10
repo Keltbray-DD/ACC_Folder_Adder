@@ -387,7 +387,7 @@ async function searchAndPerformAction(folderList) {
   for (const searchFolder of folderList) {
     console.log("Apply permissions to ", searchFolder.folderName);
     for (const permissionFolder of folderPermissionList) {
-      if (searchFolder.folderName.includes(permissionFolder.foldername)) {
+      if (searchFolder.folderName.includes(permissionFolder.folderName)) {
         console.log(
           `Match found: Folder '${
             searchFolder.foldername
@@ -403,10 +403,10 @@ async function searchAndPerformAction(folderList) {
             permissionList.subjectId,
             permissionList.subjectType,
             permissionList.actions,
-            searchFolder.foldername
+            searchFolder.folderName
           );
         }
-        statusElement.innerHTML = `<p>Updating Folder permissions: ${searchFolder.foldername}</p>`;
+        statusElement.innerHTML = `<p>Updating Folder permissions: ${searchFolder.folderName}</p>`;
       }
     }
   }

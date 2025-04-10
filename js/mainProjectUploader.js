@@ -67,6 +67,7 @@ async function renderGroupParentFolders(data, element) {
     );
     projectWIPFolders = [];
     projectData = await getPermissionsListFromSP(selectedValue);
+    console.log(projectData)
     folderPermissionList = JSON.parse(
       projectData[0].project_creation_defualt_permiss
     );
