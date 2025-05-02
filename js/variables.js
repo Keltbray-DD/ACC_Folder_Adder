@@ -1,5 +1,5 @@
 const appName = "ACC Framework Project Uploader";
-const appVersion = "v1.1.4";
+const appVersion = "v1.1.5";
 
 const hubID = "b.24d2d632-e01b-4ca0-b988-385be827cb04"
 const account_id = "24d2d632-e01b-4ca0-b988-385be827cb04"
@@ -14,6 +14,7 @@ var AccessToken_DataCreate
 var AccessToken_DataRead
 var AccessToken_BucketCreate
 let accessTokenDataWrite
+let toolURL
 
 let ProjectList =[]
 let ProjectListRaw
@@ -37,6 +38,7 @@ let newFolderLinkBtn
 let submitBtn
 let newProjectBtn
 let folderTree
+let loadingModal
 
 const folderIcon = '<svg viewBox="0 0 24 24" width="24" height="24" class="folder-icon"><path d="M10 4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6z"></path></svg>';
 

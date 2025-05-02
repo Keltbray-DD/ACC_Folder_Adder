@@ -7,7 +7,13 @@ document.addEventListener("DOMContentLoaded", async function () {
   gorupParentFoldersElement = document.getElementById("groupParentFolders");
   nameInput = document.getElementById("input_subprojectname");
   folderTree = document.getElementById("folderTree");
+  loadingModal = document.getElementById("loading");
 
+  const fullUrl = window.location.href;
+  toolURL = fullUrl.split("?")[0];
+  await checkLogin()
+  
+  showLoadingSpinner(loadingModal)
   project_Name = sessionStorage.getItem("projectName");
   projectID = sessionStorage.getItem("projectID");
   if (!projectID) {
@@ -18,9 +24,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   await getFolders();
   renderGroupParentFolders(framework_folder_array, gorupParentFoldersElement);
   renderSubContractorList(projectWIPFolders);
-
-  newFolderLinkBtn.style.display = "none";
-  newProjectBtn.style.display = "none";
+  hideLoadingSpinner(loadingModal)
   document.getElementById("appInfo").textContent = `${appName} ${appVersion}`;
 });
 
@@ -36,6 +40,9 @@ function renderSubContractorList(data) {
           `;
     subContractorsListHtml.appendChild(gridItem);
   });
+  subContractorsListHtml.addEventListener("change", () => {
+    submitBtn.disabled = false
+    });
 }
 
 async function renderGroupParentFolders(data, element) {
@@ -249,4 +256,20 @@ function moveFoldersToWIP() {
   });
 
   console.log("Updated 0C.WIP:", wipFolder);
+}
+
+async function showLoadingSpinner(element) {
+  const loadingSpinner = document.getElementById('loading');
+
+  // Show the loading spinner
+
+  loadingSpinner.style.display = 'block';
+}
+
+async function hideLoadingSpinner(element) {
+  const loadingSpinner = document.getElementById('loading');
+
+  // Show the loading spinner
+  loadingSpinner.style.display = 'none';
+
 }
